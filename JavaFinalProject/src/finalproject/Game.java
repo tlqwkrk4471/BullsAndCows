@@ -25,7 +25,7 @@ import javax.swing.GroupLayout.Alignment;
 public class Game {
 
 	private JFrame frame;
-	private int digit;
+	private int digit; // 숫자의 자릿수
 	
 	public void setDigit(int digit) {
 		this.digit = digit;

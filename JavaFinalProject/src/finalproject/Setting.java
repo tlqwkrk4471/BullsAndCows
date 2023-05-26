@@ -23,6 +23,8 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+import java.awt.Color;
 
 public class Setting extends Game {
 
@@ -44,7 +46,6 @@ public class Setting extends Game {
 	/**
 	 * Create the application.
 	 */
-	public Setting() {}
 	public Setting(Game game) {
 		this.game = game;
 		initialize();
@@ -59,7 +60,14 @@ public class Setting extends Game {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
+		JLabel lblSetting = new JLabel("Setting");
+		lblSetting.setHorizontalAlignment(SwingConstants.CENTER);
+		lblSetting.setFont(new Font("Lucida Grande", Font.PLAIN, 32));
+		lblSetting.setBounds(113, 16, 173, 38);
+		frame.getContentPane().add(lblSetting);
+		
 		textField = new JTextField();
+		textField.setForeground(Color.GRAY);
 		textField.setText("원하는 자릿수를 입력하세요");
 		textField.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		textField.setBounds(64, 96, 272, 51);
@@ -74,7 +82,8 @@ public class Setting extends Game {
 		btnNewButton.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				setDigit(4);
+				game.setDigit(4);
+				textField.setText("초기화되었습니다");
 			}
 		});
 		
@@ -83,8 +92,13 @@ public class Setting extends Game {
 			public void actionPerformed(ActionEvent e) {
 				String inputText = textField.getText();
                 try {
-                    game.setDigit(Integer.parseInt(inputText)); // 입력된 값을 정수로 변환하여 digit에 저장
-                    textField.setText("저장되었습니다");
+                	int num = Integer.parseInt(inputText);
+                	if(num >= 3 && num <= 5) {
+                		textField.setText("저장되었습니다");
+                		game.setDigit(num); // 입력된 값을 정수로 변환하여 digit에 저장
+                	}
+                	else textField.setText("3~5 사이의 숫자를 입력하세요");
+                    
                 } catch (NumberFormatException ex) {
                     textField.setText("올바른 숫자를 입력하세요");
                 }
