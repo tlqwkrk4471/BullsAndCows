@@ -1,27 +1,15 @@
 package finalproject;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import javax.swing.JTextField;
 import java.awt.Font;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import java.awt.CardLayout;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.RowSpec;
-import net.miginfocom.swing.MigLayout;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import java.awt.Color;
