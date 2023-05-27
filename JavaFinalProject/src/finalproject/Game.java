@@ -1,10 +1,6 @@
 package finalproject;
 
-import java.awt.EventQueue;
-import java.awt.Window;
-
 import javax.swing.JFrame;
-import java.awt.BorderLayout;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import java.awt.Font;
@@ -12,10 +8,7 @@ import java.awt.Color;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.GridLayout;
 import javax.swing.JPanel;
-import java.awt.FlowLayout;
-import javax.swing.BoxLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -98,6 +91,12 @@ public class Game {
 		JButton btnNewButton_1 = new JButton("Multi Play");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				try {
+					Multiplay multiplay = new Multiplay(Game.this);
+					multiplay.run();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
 			}
 		});
 		btnNewButton_1.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
@@ -119,6 +118,7 @@ public class Game {
 		JButton btnNewButton_3 = new JButton("Exit");
 		btnNewButton_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
 			}
 		});
 		btnNewButton_3.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
@@ -151,4 +151,5 @@ public class Game {
 		);
 		panel.setLayout(gl_panel);
 	}
+
 }

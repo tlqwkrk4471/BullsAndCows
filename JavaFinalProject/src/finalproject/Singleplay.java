@@ -3,6 +3,7 @@ package finalproject;
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -14,19 +15,23 @@ import java.awt.event.ActionEvent;
 import java.awt.Color;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class Singleplay extends Play {
 
 	private JFrame frame;
-	private Game game;
 	private JLabel turnLabel;
 	private JLabel playerResultLabel;
 	private JLabel computerResultLabel;
 	private JTextField playerTextField;
 	private JTextField computerTextField;
 	private static Object lock = new Object();
-	Player player;
-	Computer computer;
+	private Game game;
+	private Player player;
+	private Computer computer;
 
 	/**
 	 * Launch the application.
@@ -34,6 +39,7 @@ public class Singleplay extends Play {
 	public void run() {
 		try {
 			frame.setVisible(true);
+			singleplayThread.start();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -50,10 +56,7 @@ public class Singleplay extends Play {
 		player = new Player(getDigit());
 		computer = new Computer(getDigit());
 		
-		initialize(); // set player's number
-		
-		appendLog("Game Start!\n");
-		appendLog("Enter your number.");
+		initialize();
 	}
 	
 	public String Array2String(int askNumber[]) {
@@ -66,26 +69,64 @@ public class Singleplay extends Play {
 		return string_askNumber;
 	}
 	
-	Thread runThread = new Thread(new Runnable() {
+	Thread singleplayThread = new Thread(new Runnable() {
 		public void run() {
+			
+			appendLog("Game Start!\n");
+			appendLog("Enter your number.");
+			
+			synchronized(lock) {
+	            try {
+	                lock.wait(); // 버튼이 눌리기를 기다림
+	            } catch (InterruptedException e) {
+	                e.printStackTrace();
+	            }
+	        }
+			
+			String input;
+			String[] numbers = new String[getDigit()];
+			input = playerTextField.getText();
+			numbers = input.split(" ");
+			for(int i = 0; i < getDigit(); i++) {
+        		player.setNumber(i, Integer.parseInt(numbers[i]));
+        	}
+			appendLog("Your number is " + input + ".\n");
+        	playerTextField.setText("");
+			
 			while(true) {
 				setTurn(getTurn()+1);
 				
-				int askNumber[] = computer.askNumber(getDigit(), getTurn());
-				String string_askNumber = Array2String(askNumber);
-				
 				try {
-					Thread.sleep(2000);
+					Thread.sleep(1000);
 				} catch (InterruptedException e1) {
 					e1.printStackTrace();
 				}
 				
-				computerTextField.setText(string_askNumber);
-				
 				turnLabel.setText("Turn: " + getTurn());
 				appendLog("--------------Turn: " + getTurn() + "--------------");
+				
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+				
+				int askNumber[] = new int[getDigit()];
+				String string_askNumber;
+				askNumber = computer.askNumber(getDigit(), getTurn());
+				string_askNumber = Array2String(askNumber);
+				computerTextField.setText(string_askNumber);
+				
 				appendLog("Computer: " + string_askNumber + "\n");
 				int[] calculateResult = calculateResult(askNumber, player.getArray());
+				
+				computerResultLabel.setText("calculating...");
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+				
 				String resultString = calculateResult[0] + " Strike " + calculateResult[1] + " Ball";
 				if(calculateResult[0] == getDigit()) {
 					playerResultLabel.setForeground(Color.RED);
@@ -100,6 +141,9 @@ public class Singleplay extends Play {
 				
 				computer.calculateCandidates(getDigit(), askNumber, calculateResult);
 				
+				playerTextField.setForeground(Color.GRAY);
+				playerTextField.setText("Deduce number.");
+				
 				synchronized(lock) {
 		            try {
 		                lock.wait(); // 버튼이 눌리기를 기다림
@@ -109,13 +153,22 @@ public class Singleplay extends Play {
 		        }
 				
 				string_askNumber = playerTextField.getText();
-				String[] numbers = string_askNumber.split(" ");
+				playerTextField.setText("");
+				numbers = string_askNumber.split(" ");
 				for(int i = 0; i < getDigit(); i++) {
             		askNumber[i] = Integer.parseInt(numbers[i]);
             	}
 				
-				appendLog("Player  : " + string_askNumber + "\n");
+				appendLog("Player      : " + string_askNumber + "\n");
 				calculateResult = calculateResult(askNumber, computer.getArray());
+				
+				playerResultLabel.setText("calculating...");
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+				
 				resultString = calculateResult[0] + " Strike " + calculateResult[1] + " Ball";
 				if(calculateResult[0] == getDigit()) {
 					playerResultLabel.setForeground(Color.RED);
@@ -131,12 +184,20 @@ public class Singleplay extends Play {
 		}
     });
 	
-	public Boolean checkValid(String[] numbers) {
+	public boolean isInteger(String input) {
+	    return input.matches("-?\\d+");
+	}
+	
+	public boolean checkValid(String[] numbers) {
 		if(numbers.length != getDigit()) {
         	appendLog("You should enter " + getDigit() + " digits.");
         	return false;
         }
 		for(int i = 0; i < getDigit(); i++) {
+			if(!isInteger(numbers[i])) {
+				appendLog("You should enter " + getDigit() + " numbers.");
+            	return false;
+			}
         	if(Integer.parseInt(numbers[i])/10 > 0) {
         		appendLog("You should enter " + getDigit() + " digits.");
             	return false;
@@ -167,6 +228,22 @@ public class Singleplay extends Play {
 		frame.getContentPane().add(panel);
 		
 		playerTextField = new JTextField();
+		playerTextField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(playerTextField.getText().equals("Deduce number.") || playerTextField.getText().equals("ex: 0 1 2 3")) {
+					playerTextField.setForeground(Color.BLACK);
+					playerTextField.setText("");
+				}
+			}
+		});
+		playerTextField.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				playerTextField.setForeground(Color.BLACK);
+				playerTextField.setText("");
+			}
+		});
 		playerTextField.setForeground(Color.GRAY);
 		playerTextField.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		playerTextField.setText("ex: 0 1 2 3");
@@ -178,22 +255,12 @@ public class Singleplay extends Play {
                 String[] numbers = input.split(" ");
                 if(!checkValid(numbers)) return;
                 
-                if(getTurn() == 0) {
-                	for(int i = 0; i < getDigit(); i++) {
-                		player.setNumber(i, Integer.parseInt(numbers[i]));
-                	}
-                	appendLog("Your number is " + input + ".\n");
-                	playerTextField.setText("");
-                
-                	runThread.start();
-                }
-                else {
-                	synchronized(lock) {
-                        lock.notify(); // 대기 중인 스레드 깨우기
-                    }
+                synchronized(lock) {
+                	lock.notify(); // 대기 중인 스레드 깨우기
                 }
             }
         });
+		
 		
 		JLabel lblNewLabel_1 = new JLabel("Player");
 		lblNewLabel_1.setBounds(80, 50, 69, 30);
@@ -209,6 +276,10 @@ public class Singleplay extends Play {
 		JButton btnNewButton = new JButton("New game");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				Singleplay newSingleplay = new Singleplay(game);
+				newSingleplay.run();
+				frame.setVisible(false);
+				return;
 			}
 		});
 		btnNewButton.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
@@ -216,6 +287,21 @@ public class Singleplay extends Play {
 		JButton btnNewButton_2 = new JButton("Help");
 		btnNewButton_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String helpMessage = "<html><b>숫자 야구 도움말</b><br><br>"
+		                + "숫자 야구는 상대방의 비밀 숫자를 맞추는 게임입니다.<br>"
+		                + "게임은 다음과 같은 단계로 진행됩니다:<br><br>"
+		                + "1. 게임 시작 시 비밀 숫자를 생성합니다.<br>"
+		                + "2. 상대방이 추측한 숫자를 입력 받습니다.<br>"
+		                + "3. 비밀 숫자와 상대방의 추측 숫자를 비교하여 결과를 피드백합니다.<br>"
+		                + "4. 상대방이 비밀 숫자를 맞출 때까지 2~3단계를 반복합니다.<br><br>"
+		                + "게임의 결과 피드백은 다음과 같이 이루어집니다:<br><br>"
+		                + "1. 숫자와 위치가 모두 일치하는 경우 '스트라이크'입니다.<br>"
+		                + "2. 숫자는 일치하지만 위치가 다른 경우 '볼'입니다.<br>"
+		                + "3. 숫자와 위치 모두 일치하지 않는 경우 '아웃'입니다.<br><br>"
+		                + "상대방이 비밀 숫자를 맞추면 게임이 종료됩니다.<br>"
+		                + "숫자 야구를 즐겁게 플레이하세요!</html>";
+
+		        JOptionPane.showMessageDialog(null, helpMessage, "숫자 야구 도움말", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 		btnNewButton_2.setFont(new Font("Lucida Grande", Font.PLAIN, 20));

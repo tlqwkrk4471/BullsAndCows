@@ -73,7 +73,6 @@ public class Computer extends GameObject {
 				else break;
 			}
 		}
-		System.out.println(Arrays.toString(askNumber));
 		return askNumber;
 	}
 	
