@@ -44,6 +44,7 @@ public class Setting extends Game {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.getContentPane().setBackground(new Color(254, 250, 146));
 		frame.setBounds(100, 100, 400, 320);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
@@ -63,6 +64,7 @@ public class Setting extends Game {
 		textField.setColumns(10);
 		
 		JPanel panel = new JPanel();
+		panel.setBackground(new Color(254, 250, 146));
 		panel.setBounds(6, 205, 388, 81);
 		frame.getContentPane().add(panel);
 		

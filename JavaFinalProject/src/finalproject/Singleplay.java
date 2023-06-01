@@ -219,11 +219,13 @@ public class Singleplay extends Play {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.getContentPane().setBackground(new Color(254, 250, 146));
 		frame.setBounds(100, 100, 800, 452);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		JPanel panel = new JPanel();
+		panel.setBackground(new Color(254, 250, 146));
 		panel.setBounds(0, 6, 475, 412);
 		frame.getContentPane().add(panel);
 		
@@ -271,6 +273,7 @@ public class Singleplay extends Play {
 		lblNewLabel_1_1.setFont(new Font("Lucida Grande", Font.PLAIN, 24));
 		
 		JPanel panel_1 = new JPanel();
+		panel_1.setBackground(new Color(254, 250, 146));
 		panel_1.setBounds(42, 315, 388, 81);
 		
 		JButton btnNewButton = new JButton("New game");

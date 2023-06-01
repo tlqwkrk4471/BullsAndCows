@@ -233,11 +233,13 @@ public class Multiplay extends Play {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.getContentPane().setBackground(new Color(254, 250, 146));
 		frame.setBounds(100, 100, 800, 452);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		JPanel panel = new JPanel();
+		panel.setBackground(new Color(254, 250, 146));
 		panel.setBounds(0, 6, 475, 412);
 		panel.setLayout(null);
 		frame.getContentPane().add(panel);
@@ -353,6 +355,7 @@ public class Multiplay extends Play {
 		panel.add(playerResultLabel[1]);
 		
 		JPanel panel_1 = new JPanel();
+		panel_1.setBackground(new Color(254, 250, 146));
 		panel_1.setBounds(42, 315, 388, 81);
 		panel.add(panel_1);
 		
