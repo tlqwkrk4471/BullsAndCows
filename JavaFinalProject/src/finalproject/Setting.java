@@ -17,7 +17,6 @@ import java.awt.Color;
 public class Setting extends Game {
 
 	private JFrame frame;
-	private JTextField textField;
 	private Game game;
 
 	/**
@@ -55,7 +54,7 @@ public class Setting extends Game {
 		lblSetting.setBounds(113, 16, 173, 38);
 		frame.getContentPane().add(lblSetting);
 		
-		textField = new JTextField();
+		JTextField textField = new JTextField();
 		textField.setForeground(Color.GRAY);
 		textField.setText("원하는 자릿수를 입력하세요");
 		textField.setFont(new Font("Lucida Grande", Font.PLAIN, 20));

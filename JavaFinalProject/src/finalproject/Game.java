@@ -86,6 +86,7 @@ public class Game {
 				try {
 					Multiplay multiplay = new Multiplay(Game.this);
 					multiplay.run();
+					frame.setVisible(false);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
